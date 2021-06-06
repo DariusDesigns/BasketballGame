@@ -1,0 +1,27 @@
+public class Ball {
+  float x;
+    float y;
+    
+    float speed;
+    float angle;
+    
+    float size;
+    
+    void loseBall(float playerX, float playerY, float playerAngle){
+      x = playerX;
+      y = playerY;
+      angle = playerAngle;
+      
+      speed = 10;
+      size = 20;
+    }
+    
+    void drawBall(){
+     x += cos(angle) * speed;
+     y += sin(angle) * speed;
+     
+     image(ball, x, y, size, size);
+    
+    }
+
+}
