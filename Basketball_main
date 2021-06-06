@@ -1,0 +1,882 @@
+Bounce[] thisBounce = new Bounce[50];
+
+  float angle;
+  float angle2;
+  float angleO;
+  float angleD;
+  float turnSpeed;
+  float moveSpeed;
+
+  float playerX;
+  float playerY;
+  float player2X;
+  float player2Y;
+  float defenseX;
+  float defenseY;
+  float offenseX;
+  float offenseY;
+
+  float hoopX;
+  float hoopY;
+
+  float bounceAngle;
+
+  float timer;
+  int score1;
+  int score2;
+
+  boolean holdingLeft;
+  boolean holdingRight;
+  boolean holdingUp;
+  boolean holdingDown;
+
+  boolean holdingA;
+  boolean holdingD;
+  boolean holdingW;
+  boolean holdingS;
+
+  boolean holdingBall;
+  boolean isBallShot;
+
+  String gameState;
+
+  PImage court;
+  PImage ball;
+  PImage PG;
+  PImage Bron;
+  PImage arrow;
+  PImage fireball;
+
+  Ball thisBall;
+
+  void setup() {
+    size(1500, 600);
+
+    gameState = "title";
+
+    for (int i=0; i<50; i++) {
+      thisBounce[i] = new Bounce(i * 100, i + 100);
+    }
+
+    playerX = width - 100;
+    playerY = height - 100;
+
+    player2X = 275;
+    player2Y = 100;
+
+    offenseX = width - 100;
+    offenseY = height - 100;
+    defenseX = 275;
+    defenseY = 100;
+
+    hoopX = 103.5;
+    hoopY = height/2 - 3;
+
+    angle = 0;
+    angle2 = 0;
+    angleO = 0;
+    angleD = 0;
+
+    turnSpeed = .05;
+    moveSpeed = 5;
+
+    timer = 1600;
+    score1 = 0;
+    score2 = 0;
+
+    court = loadImage ("Court.png");
+    ball = loadImage ("Basketball.png");
+    PG = loadImage ("PG.png");
+    Bron = loadImage ("Bron.png");
+    arrow = loadImage ("Arrow.png");
+    fireball = loadImage ("Ball on fire.png");
+
+    thisBall = new Ball();
+
+    holdingLeft = false;
+    holdingRight = false;
+    holdingUp = false;
+    holdingDown = false;
+
+    holdingA = false;
+    holdingD = false;
+    holdingW = false;
+    holdingS = false;
+
+    holdingBall = true;
+    isBallShot = false;
+
+    thisBall.loseBall(-1000, -1000, 0);
+
+    thisBall.drawBall();
+  }
+
+  void draw() {
+    if (gameState == "firstQuarter") {
+      drawFirstQuarter();
+    }
+    if (gameState == "endOfFirst") {
+      drawEndOfFirst();
+    }
+    if (gameState == "secondQuarter") {
+      drawSecondQuarter();
+    }
+    if (gameState == "endOfHalf") {
+      drawEndOfHalf();
+    }
+    if (gameState == "thirdQuarter") {
+      drawThirdQuarter();
+    }
+    if (gameState == "endOfThird") {
+      drawEndOfThird();
+    }
+    if (gameState == "fourthQuarter") {
+      drawFourthQuarter();
+    }
+    if (gameState == "gameOver") {
+      drawGameOver();
+    }
+
+    if (gameState == "title") {
+      drawTitle();
+    }
+    if (gameState == "directions") {
+      drawHelp();
+    }
+    if (gameState == "credits") {
+      drawCredits();
+    }
+
+    if (playerX >= width) {
+      playerX = width - 10;
+    }
+    if (playerX <= 0) {
+      playerX = 10;
+    }
+    if (playerY >= height) {
+      playerY = height - 10;
+    }
+    if (playerY <= 0) {
+      playerY = 10;
+    }
+    if (player2X >= width) {
+      playerX = width - 10;
+    }
+    if (player2X <= 0) {
+      playerX = 10;
+    }
+    if (player2Y >= height) {
+      playerY = height - 10;
+    }
+    if (player2Y <= 0) {
+      playerY = 10;
+    }
+    if (offenseY >= height) {
+      offenseY = height - 10;
+    }
+    if (offenseY <= 0) {
+      offenseY = 10;
+    }
+    if (defenseY >= height) {
+      defenseY = height - 10;
+    }
+    if (defenseY <= 0) {
+      defenseY = 10;
+    }
+    if (offenseX >= width) {
+      offenseX = width - 10;
+    }
+    if (offenseX <= 0) {
+      offenseX = 10;
+    }
+    if (defenseX >= width) {
+      defenseX = width - 10;
+    }
+    if (defenseX <= 0) {
+      defenseX = 10;
+    }
+
+    if (gameState == "endOfFirst") {
+      holdingBall = true;
+    }
+    if (gameState == "endOfHalf") {
+      holdingBall = true;
+      playerX = width - 100;
+      playerY = height - 100;
+      player2X = 275;
+      player2Y = 100;
+    }
+    if (gameState == "endOfThird") {
+      holdingBall = true;
+      offenseX = width - 100;
+      offenseY = height - 100;
+      defenseX = 275;
+      defenseY = 100;
+    }
+    if (gameState == "gameOver") {
+      holdingBall = true;
+    }
+  }
+
+  void drawFirstQuarter() {
+    background(0);
+    imageMode(CENTER);
+    image(court, 730, 300);
+    image(fireball, width/2, height/2, 150, 125);
+
+
+    float ballDist = 25;
+    float ballX = playerX + cos(angle) * ballDist;
+    float ballY = playerY + sin(angle) * ballDist;
+
+    float ballDist2 = 25;
+    float ball2X = player2X + cos(angle2) * ballDist2;
+    float ball2Y = player2Y + sin(angle2) * ballDist2;
+
+    thisBall.drawBall();
+
+    if (holdingLeft == true) {
+      angle -= turnSpeed;
+    }
+    if (holdingRight == true) {
+      angle += turnSpeed;
+    }
+    if (holdingUp == true) {
+      playerX += cos(angle) * moveSpeed;
+      playerY += sin(angle) * moveSpeed;
+    }
+    if (holdingA == true) {
+      angle2 -= turnSpeed;
+    }
+    if (holdingD == true) {
+      angle2 += turnSpeed;
+    }
+    if (holdingW == true) {
+      player2X += cos(angle2) * moveSpeed;
+      player2Y += sin(angle2) * moveSpeed;
+    }
+
+    float distance = dist(player2X, player2Y, thisBall.x, thisBall.y);
+    if (distance < 50/2 +thisBall.size/2) {
+      thisBall.speed = -20;
+    }
+    float distance2 = dist(playerX, playerY, thisBall.x, thisBall.y);
+    if (thisBall.speed == -20 && distance2 < 50/2 + thisBall.size/2) {
+      holdingBall = true;
+    }
+    float distance3 = dist(hoopX, hoopY, thisBall.x, thisBall.y);
+    if (distance3 < 70/2 + thisBall.size/2) {
+      thisBall.loseBall(-1000, -1000, 0);
+      score1 ++;
+    }
+
+    ellipse(hoopX, hoopY, 40, 40);
+    fill(255);
+    image(PG, playerX, playerY, 150, 150);
+    if (holdingBall == true) {
+      bounceAngle += 0.3; 
+      float ball3X = playerX - 40;
+      float ball3Y = playerY + sin(bounceAngle) * 9;
+      image(ball, ball3X, ball3Y, 20, 20);
+    }
+    image(Bron, player2X, player2Y, 150, 150);
+
+    pushMatrix();
+    translate(ballX, ballY);
+    rotate(angle);
+    image(arrow, 20, 0, 40, 60);
+    imageMode(CENTER);
+    popMatrix();
+
+    pushMatrix();
+    translate(ball2X, ball2Y);
+    rotate(angle2);
+    image(arrow, 20, 0, 40, 60);
+    popMatrix();
+
+    if (holdingBall == true) {
+      thisBall.loseBall(-1000, -1000, 0);
+    }
+
+    if (thisBall.y < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.y > height) {
+      holdingBall = true;
+    }
+    if (thisBall.x < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.x > width) {
+      holdingBall = true;
+    }
+
+    timer --;
+    float boxWidth = timer * 0.5;
+    rect(50, 20, boxWidth, 20);
+
+    text("Time: "+timer, 110, 60);
+    textSize(20);
+
+    if (timer <= 0) {
+      timer = 1600;
+      gameState = "endOfFirst";
+    }
+    fill(0);
+    text("Player 1: "+score1, 650, 60);
+    textSize(19);
+    fill(0);
+    text("Player 2: "+score2, 850, 60);
+  }
+
+  void drawEndOfFirst() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    fill(255);
+    text("END OF FIRST", 750, 100);
+    text("Player 1: "+score1, 750, 400);
+    text("Player 2: "+score2, 750, 500);
+    text("PRESS SPACE TO CONTINUE", width/2, 200);
+    textSize(40);
+  }
+
+  void drawSecondQuarter() {
+    background(0);
+    imageMode(CENTER);
+    image(court, 730, 300);
+    image(fireball, width/2, height/2, 150, 125);
+
+
+    float ballDist = 25;
+    float ballX = defenseX + cos(angleD) * ballDist;
+    float ballY = defenseY + sin(angleD) * ballDist;
+
+    float ballDist2 = 25;
+    float ball2X = offenseX + cos(angleO) * ballDist2;
+    float ball2Y = offenseY + sin(angleO) * ballDist2;
+
+    thisBall.drawBall();
+
+    if (holdingLeft == true) {
+      angleD -= turnSpeed;
+    }
+    if (holdingRight == true) {
+      angleD += turnSpeed;
+    }
+    if (holdingUp == true) {
+      defenseX += cos(angleD) * moveSpeed;
+      defenseY += sin(angleD) * moveSpeed;
+    }
+    if (holdingA == true) {
+      angleO -= turnSpeed;
+    }
+    if (holdingD == true) {
+      angleO += turnSpeed;
+    }
+    if (holdingW == true) {
+      offenseX += cos(angleO) * moveSpeed;
+      offenseY += sin(angleO) * moveSpeed;
+    }
+
+    float distance = dist(defenseX, defenseY, thisBall.x, thisBall.y);
+    if (distance < 50/2 +thisBall.size/2) {
+      thisBall.speed = -20;
+    }
+    float distance2 = dist(offenseX, offenseY, thisBall.x, thisBall.y);
+    if (thisBall.speed == -20 && distance2 < 50/2 + thisBall.size/2) {
+      holdingBall = true;
+    }
+    float distance3 = dist(hoopX, hoopY, thisBall.x, thisBall.y);
+    if (distance3 < 70/2 + thisBall.size/2) {
+      thisBall.loseBall(-1000, -1000, 0);
+      score2 ++;
+    }
+
+    ellipse(hoopX, hoopY, 40, 40);
+    fill(255);
+    image(Bron, offenseX, offenseY, 150, 150);
+    if (holdingBall == true) {
+      bounceAngle += 0.3; 
+      float ball3X = offenseX - 40;
+      float ball3Y = offenseY + sin(bounceAngle) * 9;
+      image(ball, ball3X, ball3Y, 20, 20);
+    }
+    image(PG, defenseX, defenseY, 150, 150);
+
+    pushMatrix();
+    translate(ballX, ballY);
+    rotate(angleD);
+    image(arrow, 20, 0, 40, 60);
+    imageMode(CENTER);
+    popMatrix();
+
+    pushMatrix();
+    translate(ball2X, ball2Y);
+    rotate(angleO);
+    image(arrow, 20, 0, 40, 60);
+    popMatrix();
+
+    if (holdingBall == true) {
+      thisBall.loseBall(-1000, -1000, 0);
+    }
+
+    if (thisBall.y < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.y > height) {
+      holdingBall = true;
+    }
+    if (thisBall.x < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.x > width) {
+      holdingBall = true;
+    }
+
+    timer --;
+    float boxWidth = timer * 0.5;
+    rect(50, 20, boxWidth, 20);
+
+    text("Time: "+timer, 110, 60);
+    textSize(20);
+
+    if (timer <= 0) {
+      timer = 1600;
+      gameState = "endOfHalf";
+      playerX = width - 100;
+      playerY = height - 100;
+    }
+    fill(0);
+    text("Player 2: "+score2, 650, 60);
+    text("Player 1: "+score1, 850, 60);
+    textSize(19);
+  }
+  void drawEndOfHalf() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    fill(255);
+    text("END OF HALF", 750, 100);
+    text("Player 1: "+score1, 750, 400);
+    text("Player 2: "+score2, 750, 500);
+    text("PRESS SPACE TO CONTINUE", width/2, 200);
+    textSize(40);
+  }
+
+  void drawThirdQuarter() {
+    background(0);
+    imageMode(CENTER);
+    image(court, 730, 300);
+    image(fireball, width/2, height/2, 150, 125);
+
+
+    float ballDist = 25;
+    float ballX = playerX + cos(angle) * ballDist;
+    float ballY = playerY + sin(angle) * ballDist;
+
+    float ballDist2 = 25;
+    float ball2X = player2X + cos(angle2) * ballDist2;
+    float ball2Y = player2Y + sin(angle2) * ballDist2;
+
+    thisBall.drawBall();
+
+    if (holdingLeft == true) {
+      angle -= turnSpeed;
+    }
+    if (holdingRight == true) {
+      angle += turnSpeed;
+    }
+    if (holdingUp == true) {
+      playerX += cos(angle) * moveSpeed;
+      playerY += sin(angle) * moveSpeed;
+    }
+    if (holdingA == true) {
+      angle2 -= turnSpeed;
+    }
+    if (holdingD == true) {
+      angle2 += turnSpeed;
+    }
+    if (holdingW == true) {
+      player2X += cos(angle2) * moveSpeed;
+      player2Y += sin(angle2) * moveSpeed;
+    }
+
+    float distance = dist(player2X, player2Y, thisBall.x, thisBall.y);
+    if (distance < 50/2 +thisBall.size/2) {
+      thisBall.speed = -20;
+    }
+    float distance2 = dist(playerX, playerY, thisBall.x, thisBall.y);
+    if (thisBall.speed == -20 && distance2 < 50/2 + thisBall.size/2) {
+      holdingBall = true;
+    }
+    float distance3 = dist(hoopX, hoopY, thisBall.x, thisBall.y);
+    if (distance3 < 70/2 + thisBall.size/2) {
+      thisBall.loseBall(-1000, -1000, 0);
+      score1 ++;
+    }
+
+    ellipse(hoopX, hoopY, 40, 40);
+    fill(255);
+    image(PG, playerX, playerY, 150, 150);
+    if (holdingBall == true) {
+      bounceAngle += 0.3; 
+      float ball3X = playerX - 40;
+      float ball3Y = playerY + sin(bounceAngle) * 9;
+      image(ball, ball3X, ball3Y, 20, 20);
+    }
+    image(Bron, player2X, player2Y, 150, 150);
+
+    pushMatrix();
+    translate(ballX, ballY);
+    rotate(angle);
+    image(arrow, 20, 0, 40, 60);
+    imageMode(CENTER);
+    popMatrix();
+
+    pushMatrix();
+    translate(ball2X, ball2Y);
+    rotate(angle2);
+    image(arrow, 20, 0, 40, 60);
+    popMatrix();
+
+    if (holdingBall == true) {
+      thisBall.loseBall(-1000, -1000, 0);
+    }
+
+
+    if (thisBall.y < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.y > height) {
+      holdingBall = true;
+    }
+    if (thisBall.x < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.x > width) {
+      holdingBall = true;
+    }
+
+    timer --;
+    float boxWidth = timer * 0.5;
+    rect(50, 20, boxWidth, 20);
+
+    text("Time: "+timer, 110, 60);
+    textSize(20);
+
+    if (timer <= 0) {
+      timer = 1600;
+      gameState = "endOfThird";
+      offenseX = width - 100;
+      offenseY = height - 100;
+    }
+    fill(0);
+    text("Player 1: "+score1, 650, 60);
+    text("Player 2: "+score2, 850, 60);
+    textSize(19);
+  }
+  void drawEndOfThird() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    fill(255);
+    text("END OF THIRD", 750, 100);
+    text("Player 1: "+score1, 750, 400);
+    text("Player 2: "+score2, 750, 500);
+    text("PRESS SPACE TO CONTINUE", width/2, 200);
+    textSize(40);
+  }
+
+  void drawFourthQuarter() {
+    background(0);
+    imageMode(CENTER);
+    image(court, 730, 300);
+    image(fireball, width/2, height/2, 150, 125);
+
+
+    float ballDist = 25;
+    float ballX = defenseX + cos(angleD) * ballDist;
+    float ballY = defenseY + sin(angleD) * ballDist;
+
+    float ballDist2 = 25;
+    float ball2X = offenseX + cos(angleO) * ballDist2;
+    float ball2Y = offenseY + sin(angleO) * ballDist2;
+
+    thisBall.drawBall();
+
+    if (holdingLeft == true) {
+      angleD -= turnSpeed;
+    }
+    if (holdingRight == true) {
+      angleD += turnSpeed;
+    }
+    if (holdingUp == true) {
+      defenseX += cos(angleD) * moveSpeed;
+      defenseY += sin(angleD) * moveSpeed;
+    }
+    if (holdingA == true) {
+      angleO -= turnSpeed;
+    }
+    if (holdingD == true) {
+      angleO += turnSpeed;
+    }
+    if (holdingW == true) {
+      offenseX += cos(angleO) * moveSpeed;
+      offenseY += sin(angleO) * moveSpeed;
+    }
+
+    float distance = dist(defenseX, defenseY, thisBall.x, thisBall.y);
+    if (distance < 50/2 +thisBall.size/2) {
+      thisBall.speed = -20;
+    }
+    float distance2 = dist(offenseX, offenseY, thisBall.x, thisBall.y);
+    if (thisBall.speed == -20 && distance2 < 50/2 + thisBall.size/2) {
+      holdingBall = true;
+    }
+    float distance3 = dist(hoopX, hoopY, thisBall.x, thisBall.y);
+    if (distance3 < 70/2 + thisBall.size/2) {
+      thisBall.loseBall(-1000, -1000, 0);
+      score2 ++;
+    }
+
+    ellipse(hoopX, hoopY, 40, 40);
+    fill(255);
+    image(PG, defenseX, defenseY, 150, 150);
+    if (holdingBall == true) {
+      bounceAngle += 0.3; 
+      float ball3X = offenseX - 40;
+      float ball3Y = offenseY + sin(bounceAngle) * 9;
+      image(ball, ball3X, ball3Y, 20, 20);
+    }
+    image(Bron, offenseX, offenseY, 150, 150);
+
+    pushMatrix();
+    translate(ballX, ballY);
+    rotate(angleD);
+    image(arrow, 20, 0, 40, 60);
+    imageMode(CENTER);
+    popMatrix();
+
+    pushMatrix();
+    translate(ball2X, ball2Y);
+    rotate(angleO);
+    image(arrow, 20, 0, 40, 60);
+    popMatrix();
+
+    if (holdingBall == true) {
+      thisBall.loseBall(-1000, -1000, 0);
+    }
+
+    if (thisBall.y < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.y > height) {
+      holdingBall = true;
+    }
+    if (thisBall.x < -10) {
+      holdingBall = true;
+    }
+    if (thisBall.x > width) {
+      holdingBall = true;
+    }
+
+    timer --;
+    float boxWidth = timer * 0.5;
+    rect(50, 20, boxWidth, 20);
+
+    text("Time: "+timer, 110, 60);
+    textSize(20);
+
+    if (timer <= 0) {
+      timer = 1600;
+      gameState = "gameOver";
+    }
+    fill(0);
+    text("Player 2: "+score2, 650, 60);
+    text("Player 1: "+score1, 850, 60);
+    textSize(19);
+  }
+  void drawGameOver() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    for (int i=0; i<50; i++) {
+      thisBounce[i].updateBounce();
+
+      thisBounce[i].drawBounce();
+    }
+
+    fill(255);
+    text("END OF GAME", 750, 100);
+    text("Player 1: "+score1, 750, 350);
+    text("Player 2: "+score2, 750, 400);
+    text("PRESS 'T' TO GO HOME", 750, 500);
+    textSize(40);
+    text("press 'C' for credits", width/2, 550);
+
+    if (score1 > score2) {
+      text("PLAYER 1 WINS !!!!", width/2, 200);
+    }
+    if (score2 > score1) {
+      text("PLAYER 2 WINS !!!!", width/2, 200);
+    }
+    if (score1 == score2) {
+      text("PLAYERS 1 & 2 DRAW", width/2, 200);
+    }
+  }
+
+  void drawTitle() {
+    background(0, 0, 0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    for (int i=0; i<50; i++) {
+      thisBounce[i].updateBounce();
+
+      thisBounce[i].drawBounce();
+    }
+
+    textAlign(CENTER);
+    textSize(100);
+    fill(255, 255, 255);
+    text("GET READY...", width/2, 100);
+
+    textAlign(CENTER);
+    textSize(80);
+    fill(255, 255, 255);
+    text("press 'SPACE' to Play!!!", width/2, 400);
+    text("press 'H' for Help", width/2, 550);
+  }
+
+  void drawHelp() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    textSize(30);
+    text("Objective: Block opponent when on defense, and shoot the ball into the hoop when on offense", width/2, 150);
+    text("How To Play", width/2, 100);
+    text("PLAYER 1 - USE ARROW KEYS TO MOVE AND SPACE TO SHOOT", width/2, 400);
+    text("PLAYER 2 - USE W,A,D TO MOVE AND 'SHIFT' TO SHOOT", width/2, 500);
+    text("PRESS SPACE TO PLAY", width/2, 250);
+  }
+
+  void drawCredits() {
+    background(0);
+    image(fireball, 750, 300);
+    imageMode(CENTER);
+
+    for (int i=0; i<50; i++) {
+      thisBounce[i].updateBounce();
+
+      thisBounce[i].drawBounce();
+    }
+    textSize(35);
+    text("PRESS 'T' TO GO HOME", width/2, 50);
+    textSize(22);
+    text("SPECIAL THANKS TO", width/2, 100);
+    textSize(18);
+    text("allsportsrevivals.blogspot.com", width/2, 150);
+    text("imgarcade.com", width/2, 200);
+    text("picstopin.com", width/2, 250);
+    text("en.fotolia.com", width/2, 300);
+    text("https://www.pinterest.com/usernamewrx/bball/", width/2, 350);
+    text("http://media-spacejam.cursecdn.com/avatars/thumbnails/3/86/384/384/p1_7_1013.png", width/2, 400);
+    text("http://worldartsme.com/red-scroll-banner-clipart.html#gal_post_97215_red-scroll-banner-clipart-1.jpg", width/2, 450);
+    text("http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons/simple-red-glossy-icons-arrows/009570-simple-red-glossy-icon-arrows-arrow-more.png", width/2, 500);
+    text("http://www.officialpsds.com/--Balls-On-Fire-PSD92664.html", width/2, 550);
+  }
+
+  void keyPressed() {
+    if (keyCode == LEFT) {
+      holdingLeft = true;
+    }
+    if (keyCode == RIGHT) {
+      holdingRight = true;
+    }
+    if (keyCode == UP) {
+      holdingUp = true;
+    }
+    if (key == 'a') {
+      holdingA = true;
+    }
+    if (key == 'd') {
+      holdingD = true;
+    }
+    if (key == 'w') {
+      holdingW = true;
+    }
+    if (gameState == "firstQuarter" && key == ' ' && holdingBall == true) {
+      thisBall.loseBall(playerX, playerY, angle);
+      holdingBall = false;
+      isBallShot = true;
+    }
+    if (gameState == "thirdQuarter" && key == ' ' && holdingBall == true) {
+      thisBall.loseBall(playerX, playerY, angle);
+      holdingBall = false;
+      isBallShot = true;
+    }
+    if (gameState == "title" && key == ' ') {
+      gameState = "firstQuarter";
+    }
+    if (gameState == "title" && key == 'h') {
+      gameState = "directions";
+    }
+    if (gameState == "secondQuarter" && keyCode == SHIFT && holdingBall == true) {
+      thisBall.loseBall(offenseX, offenseY, angleO);
+      holdingBall = false;
+      isBallShot = true;
+    }
+    if (gameState == "fourthQuarter" && keyCode == SHIFT && holdingBall == true) {
+      thisBall.loseBall(offenseX, offenseY, angleO);
+      holdingBall = false;
+      isBallShot = true;
+    }
+    if (gameState == "endOfFirst" && key == ' ') {
+      gameState = "secondQuarter";
+    }
+    if (gameState == "endOfHalf" && key == ' ') {
+      gameState = "thirdQuarter";
+    }
+    if (gameState == "endOfThird" && key == ' ') {
+      gameState = "fourthQuarter";
+    }
+    if (gameState == "directions" && key == ' ') {
+      gameState = "firstQuarter";
+    }
+    if (gameState == "gameOver" && key == 'c') {
+      gameState = "credits";
+    }
+    if (gameState == "credits" && key == 't') {
+      gameState = "title";
+    }
+    if (gameState == "gameOver" && key == 't') {
+      gameState = "title";
+    }
+  }
+
+  void keyReleased() {
+    if (keyCode == LEFT) {
+      holdingLeft = false;
+    }
+    if (keyCode == RIGHT) {
+      holdingRight = false;
+    }
+    if (keyCode == UP) {
+      holdingUp = false;
+    }
+    if (key == 'a') {
+      holdingA = false;
+    }
+    if (key == 'd') {
+      holdingD = false;
+    }
+    if (key == 'w') {
+      holdingW = false;
+    }
+  }
