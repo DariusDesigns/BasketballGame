@@ -1,0 +1,28 @@
+public class Bounce {
+  float x;
+  float y;
+  float ySpeed;
+
+    Bounce(){
+    x = random(0, width);
+    y = random(0, height);
+    ySpeed = 3;
+  }
+
+    Bounce(float startX, float startY){
+     x = startX;
+     y = startY;
+     ySpeed = 3;
+    }
+
+  void updateBounce(){
+    y += ySpeed;
+   if (y > height || y < 0){
+    ySpeed *= -1; 
+   }
+  }
+
+  void drawBounce(){
+   image(ball, x, y, 100, 100); 
+  }
+}
